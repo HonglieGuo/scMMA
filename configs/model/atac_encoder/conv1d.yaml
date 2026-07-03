@@ -1,0 +1,19 @@
+# @package model.modality_encoders.atac
+
+_target_: src.models.components.modality_encoders.Conv1DEncoder
+d_model: ${model.backbone.d_model}
+# Aggressive downsampling to produce sequence output (Plan B)
+# Total stride: 20*10*6*3 = 3600. 116k peaks -> ~32 tokens
+kernel_sizes: [51, 11, 7, 5]
+strides: [20, 10, 6, 3]
+channels: 
+  - 16
+  - 64
+  - 256
+  - ${model.backbone.d_model} 
+dropout: 0.1
+# n_peaks will be injected at runtime
+# n_peaks will be injected at runtime
+n_peaks: null 
+# architecture default (crossattn) sets n_latents, but Conv1D calculates it.
+n_latents: null 

@@ -1,0 +1,8 @@
+# @package model.modality_encoders.atac
+
+_target_: src.models.components.modality_encoders.ChromosomalEncoder
+d_model: ${model.backbone.d_model}
+hidden_dim_per_chrom: 32
+dropout: 0.1
+# chrom_indices will be injected at runtime by the training script
+chrom_indices: null

@@ -1,0 +1,95 @@
+# Run Command: python scripts/train.py
+defaults:
+  # - _self_ # Moved to end to allow overrides
+  # Available Backbones (see configs/model/backbone/):
+  # - geneformer  : Use Pretrained Geneformer-30M (Mean pooling)
+  # - scgpt       : Use Pretrained scGPT (CLS pooling)
+  - model/backbone: geneformer 
+
+  # Fusion Strategy (Architecture):
+  # - crossattn  : Cross-Attention Fusion (Default, Better Interaction)
+  # - projection : Linear Concatenation (Simpler, Context Extension)
+  - model/arch: crossattn
+
+  # ATAC Encoder Selection:
+  # - chromosomal : Chromosomal Partitioning (Default, Preserves Topology, ~4M params).
+  # - conv1d      : Hierarchical Conv1D Sequence (Aggressive Downsampling, <1M params).
+  - model/atac_encoder: conv1d
+
+  # Dataset (Unified Multi-Modal):
+  # - multimodal        : Default Geneformer token files (use with model/backbone=geneformer)
+  # - multimodal_scgpt  : scGPT vocab files (use with model/backbone=scgpt)
+  - data: multimodal
+  - _self_
+
+# Trainer Configuration (PyTorch Lightning)
+trainer:
+  accelerator: auto        # gpu, cpu, tpu, auto
+  devices: 1               # Number of GPUs
+  max_epochs: 30           # Total training epochs (5 Warmup + 5 Finetune)
+  accumulate_grad_batches: 1 # Gradient accumulation steps (Virtual Batch Size)
+  gradient_clip_val: 1.0   # Prevent gradient explosion
+  precision: 16-mixed      # 16-mixed (AMP) for RTX GPUs, 32 for precision
+  log_every_n_steps: 10
+  check_val_every_n_epoch: 1
+
+# Data Loading Configuration (Training-specific, overrides datasets/*.yaml)
+data:
+  data_dir: "datasets/h5ad/BMMC-p10/RNA+ATAC"
+  label_col: "cell_type"
+  integration_task: "Vertical"  # Current integration task type
+
+  num_workers: 16            # Number of CPU workers for dataloadery pressure
+  pin_memory: true         # Accelerate CPU->GPU memory transfer
+  persistent_workers: true # Keep workers alive between epochs
+  max_seq_len: 1024        # Experiment: 1024 (Default: 2048) to fit larger batches
+
+# Model Configuration (Unified Adapter)
+model:
+  pooling_mode: "auto"     # "mean" (Geneformer-30M), "cls" (scGPT)
+  learning_rate: 1e-4      # Initial LR
+  weight_decay: 0.01
+  mask_ratio: 0.15         # MTP Masking Probability (0.15 is standard BERT)
+  weight_tying: true       # Share weights between Input Embedding and Output Head (Reduces ~13M params)
+  use_lora: true           # Enable LoRA (Low-Rank Adaptation)
+  warmup_epochs: 5         # Freeze backbone for first N epochs
+  
+  # Hybrid Loss Weights
+  mtp_weight: 1.0        # Masked Token Prediction (Reconstruction)
+  cls_weight: 1.0        # Cell Type Classification (Supervised)
+  contrastive_weight: 1.0 # RNA-ATAC Alignment (Self-Supervised) - Disabled for SupCon
+  supcon_weight: 2.0     # Supervised Contrastive Loss (New)
+  contrastive_temperature: 0.07 # InfoNCE temperature
+  
+  # Feature Projection
+  projection_head_type: "linear"
+  projection_dim: 256
+  eval_apply_projection: false
+  
+  # LoRA Hyperparameters
+  lora_config:
+    r: 16                  # LoRA Rank (8, 16, 32, 64)
+    alpha: 32              # LoRA Alpha (Scaling factor)
+    dropout: 0.05
+    # Target Modules for Injection:
+    # - Geneformer (BERT): ["query", "key", "value", "dense"]
+    # - scGPT (Transformer): ["out_proj", "v_proj", "k_proj", "q_proj"]
+    # Auto-detected if usually left default, but explicit is better:
+    target_modules: ["query", "key", "value", "dense"]
+
+
+# Logger Configuration
+logger:
+  name: "Adapter-Run-ATAC"
+
+# Random Seed for Reproducibility
+seed: 42
+
+# Hydra Configuration (Reduce output folder creation)
+hydra:
+  run:
+    dir: outputs/${now:%Y-%m-%d}  # Group by date only, not time
+  sweep:
+    dir: outputs/${now:%Y-%m-%d}
+  job:
+    chdir: false  # Don't change working directory

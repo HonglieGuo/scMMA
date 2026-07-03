@@ -1,0 +1,99 @@
+
+library(conos)
+library(pagoda2)
+library(parallel)
+library(ggplot2)
+library(rhdf5)
+library(HDF5Array)
+
+# The script of Conos for diagonal integration, [RNA, ATAC] data type, ATAC needs to be coverted into gene activity score. The output is graph (dimension reduction)
+# run commond for Conos
+# Rscript main_Conos.Rmd  '../../data/dataset_final/D27/rna.h5' '../../data/dataset_final/D27/atac_gas.h5' '../../result/embedding/diagonal integration/D27/Conos/'
+
+h5_to_matrix <- function(path){
+    h5_data <- h5read(path,"matrix") 
+    feature <- h5_data$features
+    barcode <- h5_data$barcodes
+    data <- t(h5_data$data)
+    colnames(data) <- as.character(barcode)
+    rownames(data) <- as.character(feature)
+    return (data)
+}
+
+h5_to_matrix2 <- function(path){
+    h5_data <- h5read(path,"data") 
+    data <- (h5_data)
+    colnames(data) <- as.character(c(1:dim(data)[2]))
+    rownames(data) <- as.character(c(1:dim(data)[1]))
+    return (data)
+}
+
+write_h5 <- function(exprs_list, h5file_list) {
+  if (length(unique(lapply(exprs_list, rownames))) != 1) {
+    stop("rownames of exprs_list are not identical.")
+  }
+  for (i in seq_along(exprs_list)) {
+    if (file.exists(h5file_list[i])) {
+      warning("h5file exists! will rewrite it.")
+      system(paste("rm", h5file_list[i]))
+    }
+    h5createFile(h5file_list[i])
+    writeHDF5Array(((exprs_list[[i]])), h5file_list[i], name = "data")
+    print(h5ls(h5file_list[i]))
+  }
+}
+
+runConos<- function(path_list, save_path){
+  data <- vector("list", length(path_list))
+  for (i in c(1:(num-1))){
+    if (i == 3){
+      name <- rownames(temp)
+      temp <- h5_to_matrix2(path_list[[i]])
+      rownames(temp) <- name
+    } else{
+      temp <- h5_to_matrix(path_list[[i]])
+    }
+    colnames(temp) <- paste0(i, "_", 1:dim(temp)[2])
+    data[[i]] <- temp
+    names(data)[i] <- as.character(i)
+  }
+  
+
+  p2l <- lapply(data,basicP2proc,n.cores=1,n.odgenes=3e3,min.cells.per.gene=0,make.geneknn=FALSE,nPcs=30,min.transcripts.per.cell = 0)
+  con <- Conos$new(p2l, n.cores=1)
+  con$buildGraph(k=15, k.self=5, k.self.weigh=0.01, ncomps=30, n.odgenes=5e3, space='PCA') 
+  con$findCommunities(resolution=1.5)
+  con$embedGraph(alpha=1/2) 
+  #write.csv(c(con$graph)[[9]][[3]]$name, c(paste0(save_path,"barcode.csv")))
+  
+  metadata <- data.frame(Cluster=con$clusters$leiden$groups)
+  hdf5file = "result.h5"
+  saveConosForScanPy(con, output.path=save_path, hdf5_filename=hdf5file, verbose=TRUE)
+  
+  embedding = con$embeddings$largeVis
+  embedding <- t(embedding)
+  write_h5(exprs_list = list(rna = embedding), 
+             h5file_list = c(paste0(save_path,"embedding.h5")))
+  return (embedding)
+}
+
+
+# load data, the input is RNA counts and ATAC gene activity score counts
+args <- commandArgs(trailingOnly = TRUE)
+num <- length(args)
+path_list <- vector("list", num-1)
+for (i in c(1:(num-1))){
+  path_list[[i]] <- args[i]
+}
+save_path <- args[num] 
+print(path_list)
+if (!dir.exists(save_path)) {
+  dir.create(save_path, recursive = TRUE)
+  print("path create")
+}
+
+# run method
+begin_time <- Sys.time()
+result <- runConos(path_list, save_path)
+end_time <- Sys.time()
+all_time <- difftime(end_time, begin_time, units="secs")

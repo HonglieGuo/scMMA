@@ -1,0 +1,96 @@
+# Run Command: python scripts/train.py --config-name train_adt data.data_dir="datasets/h5ad/BMMC-p10/RNA+ADT"
+defaults:
+  # Available Backbones (see configs/model/backbone/):
+  # - geneformer  : Use Pretrained Geneformer-30M (Mean pooling)
+  # - scgpt       : Use Pretrained scGPT (CLS pooling)
+  - model/backbone: geneformer 
+
+  # Fusion Strategy (Architecture):
+  - model/arch: crossattn
+
+  # ATAC Encoder (Optional placeholder to allow overrides)
+  - model/atac_encoder: conv1d
+
+  # Dataset (Unified Multi-Modal):
+  - data: multimodal
+  - _self_
+
+# Trainer Configuration (PyTorch Lightning)
+trainer:
+  accelerator: auto        # gpu, cpu, tpu, auto
+  devices: 1               # Number of GPUs
+  max_epochs: 30           # Total training epochs (5 Warmup + 5 Finetune)
+  accumulate_grad_batches: 1 # Gradient accumulation steps (Virtual Batch Size)
+  gradient_clip_val: 1.0   # Prevent gradient explosion
+  precision: 16-mixed      # 16-mixed (AMP) for RTX GPUs, 32 for precision
+  log_every_n_steps: 10
+  check_val_every_n_epoch: 1
+
+# Data Loading Configuration (Training-specific, overrides datasets/*.yaml)
+data:
+  data_dir: "datasets/h5ad/BMMC-p10/RNA+ADT"
+  label_col: "cell_type"
+  integration_task: "Vertical"
+
+  num_workers: 16            # Number of CPU workers for dataloadery pressure
+  pin_memory: true         # Accelerate CPU->GPU memory transfer
+  persistent_workers: true # Keep workers alive between epochs
+  max_seq_len: 1024        # Experiment: 1024 (Default: 2048) to fit larger batches
+
+# Model Configuration (Unified Adapter)
+model:
+  pooling_mode: "auto"     # "mean" (Geneformer-30M), "cls" (scGPT)
+  learning_rate: 1e-4      # Initial LR
+  weight_decay: 0.01
+  mask_ratio: 0.15         # MTP Masking Probability (0.15 is standard BERT)
+  weight_tying: true       # Share weights between Input Embedding and Output Head
+  use_lora: true           # Enable LoRA (Low-Rank Adaptation)
+  warmup_epochs: 5         # Freeze backbone for first N epochs
+  
+  # Set ADT Encoder and remove ATAC encoder
+  modality_encoders:
+    atac: null
+    adt:
+      _target_: src.models.components.modality_encoders.ADTEncoder
+      n_proteins: 134
+      d_model: ${model.backbone.d_model}
+      hidden_dim: 256
+      dropout: 0.1
+
+  fusion_module:
+    modalities: ["adt"]
+  
+  # Hybrid Loss Weights
+  mtp_weight: 1.0        # Masked Token Prediction (Reconstruction)
+  cls_weight: 1.0        # Cell Type Classification (Supervised)
+  contrastive_weight: 1.0 # RNA-ADT Alignment (Self-Supervised)
+  supcon_weight: 2.0     # Supervised Contrastive Loss
+  contrastive_temperature: 0.07 # InfoNCE temperature
+  
+  # Feature Projection
+  projection_head_type: "linear"
+  projection_dim: 256
+  eval_apply_projection: false
+  
+  # LoRA Hyperparameters
+  lora_config:
+    r: 16                  # LoRA Rank
+    alpha: 32              # LoRA Alpha (Scaling factor)
+    dropout: 0.05
+    target_modules: ["query", "key", "value", "dense"]
+
+# Logger Configuration
+logger:
+  name: "Adapter-Run-ADT"
+
+# Random Seed for Reproducibility
+seed: 42
+
+# Hydra Configuration (Reduce output folder creation)
+hydra:
+  run:
+    dir: outputs/${now:%Y-%m-%d}
+  sweep:
+    dir: outputs/${now:%Y-%m-%d}
+  job:
+    chdir: false

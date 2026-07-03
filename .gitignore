@@ -1,0 +1,74 @@
+# Datasets (large binary files hosted on Hugging Face)
+datasets/
+!datasets/**/*.md
+!datasets/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.conda/
+*.egg-info/
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# Logs and Models
+wandb/
+logs/
+outputs/
+checkpoints/
+saved_models/
+*.ckpt
+*.pth
+*.pt
+*.bin
+
+# Pretrained Models (hosted on Hugging Face)
+models/
+model_weights/
+resources/
+
+# Baselines - keep code, exclude results
+baselines/experiment_output/
+baselines/baseline_experiment_log.csv
+baselines/scMultiBench/glue/
+baselines/scMultiBench/scMultiBench_output/
+baselines/scMultiBench/tools_scripts/Multigrate/glue/
+
+# Experiment analysis (paper figures, tables, etc.)
+experiments_analysis/
+
+# Internal notes and tutorials
+notes/
+scMMA_run_tutorial.md
+
+# Debug / verification scripts (not needed for reproducing)
+datasets/debug_data_loading.py
+datasets/inspect_data.py
+scripts/benchmark_sanity.py
+scripts/check_batches.py
+scripts/check_model_load.py
+scripts/check_tokenizer.py
+scripts/reproduce_fusion_error.py
+scripts/verify_cache.py
+scripts/verify_encoders.py
+scripts/verify_linear_fusion.py
+
+# Large binary files
+**/*.h5
+**/*.h5ad
+**/*.gtf.gz
+**/*.tar.gz
+
+# External libraries
+libs/

@@ -1,0 +1,13 @@
+# scGPT Foundation Model Backbone
+# Reference: https://github.com/bowang-lab/scGPT
+# Architecture: GeneEncoder + ContinuousValueEncoder + TransformerEncoder (NOT BERT)
+# Tokenization: Gene names → token IDs, Expression values → binned float values
+_target_: src.models.components.backbones.SCGPTWrapper
+checkpoint_path: "models/pretrained/scGPT_human/best_model.pt"
+vocab_path: "models/pretrained/scGPT_human/vocab.json"
+d_model: 512
+d_hid: 512
+n_layers: 12
+n_heads: 8
+dropout: 0.2
+freeze_backbone: true

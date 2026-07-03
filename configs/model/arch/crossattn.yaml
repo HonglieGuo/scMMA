@@ -1,0 +1,17 @@
+# @package model
+
+# Architecture: Cross Attention Fusion
+fusion_module:
+  _target_: src.models.components.fusion_modules.CrossAttentionFusion
+  d_model: ${model.backbone.d_model}
+  n_heads: 8
+  modalities: ["atac"]  # Explicit list ensures layers are pre-created in __init__
+  use_gating: true
+
+# Modality Encoders
+modality_encoders:
+  atac:
+    _target_: src.models.components.modality_encoders.LatentPeakEncoder
+    n_peaks: 116490
+    n_latents: 128
+    d_model: ${model.backbone.d_model}

@@ -1,0 +1,13 @@
+# Configuration for Unlabelled (Unsupervised) Datasets
+# This file is dynamically merged if no cell_type labels are detected.
+
+model:
+  mtp_weight: 1.0        # Keep Masked Token Prediction (Self-Supervised)
+  cls_weight: 0.0        # Disable Classification (No labels)
+  supcon_weight: 0.0     # Disable Supervised Contrastive (No labels)
+  contrastive_weight: 1.0 # RNA-ATAC Alignment (Self-Supervised)
+
+logger:
+  name: "ZeroShot-Unsupervised-Integration"
+
+# Evaluation will automatically skip Bio-conservation metrics if no labels exist

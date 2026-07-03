@@ -1,0 +1,81 @@
+# @package _global_
+
+# ==============================================================================
+# Evaluation Configuration for scMMA
+# ==============================================================================
+# Use this config to benchmark trained models on the test set.
+# Command: python scripts/benchmark.py [pooling_mode="mean" or "cls"]
+# ==============================================================================
+
+defaults:
+  - _self_
+  
+  # ----------------------------------------------------------------------------
+  # Backbone Selection
+  # ----------------------------------------------------------------------------
+  # Choose the Genomic Foundation Model to use as the encoder.
+  # Options:
+  # - geneformer : Use Pretrained Geneformer (Recommended, Context-aware).
+  #                Requires 'ctheodoris/Geneformer' weights.
+  # - scgpt      : Use Pretrained scGPT (Transformer-based).
+  #                Requires scGPT vocab and model weights.
+  - model/backbone: geneformer
+
+  # ----------------------------------------------------------------------------
+  # Fusion Architecture
+  # ----------------------------------------------------------------------------
+  # Choose how to fuse RNA embeddings with other modalities (ATAC, ADT).
+  # Options:
+  # - crossattn  : Cross-Attention Fusion (DEFAULT).
+  #                Uses learnable gating and cross-attention. 
+  #                Keeps sequence length static (Output Len = RNA Len).
+  # - projection : Linear Concatenation.
+  #                Concatenates tokens: [RNA, SEP, ATAC, SEP, ADT].
+  #                Increases sequence length significantly.
+  - model/arch: crossattn
+
+  # Dataset Configuration (Unified Multi-Modal)
+  - data: multimodal
+
+trainer:
+  accelerator: auto        # 'gpu' or 'cpu' (auto detects)
+  devices: 1               # Number of GPUs to use
+  precision: 16-mixed      # '16-mixed' (AMP) or '32' (float32)
+
+# ------------------------------------------------------------------------------
+# Checkpoint Path
+# ------------------------------------------------------------------------------
+# Path to the trained Lightning checkpoint (.ckpt file).
+# - IF SPECIFIED: Loads trained weights (backbone + adapters).
+# - IF EMPTY/REMOVED: Initializes with pretrained backbone weights but 
+#   RANDOM adapter weights (Zero-shot / Sanity Check mode).
+checkpoint_path: "checkpoints/scMMA-20260126-2046-epoch=00-val_loss=8.0562.ckpt"
+
+# Output directory for results (scores.csv, embeddings.h5ad)
+output_dir: "outputs/eval"
+
+# ------------------------------------------------------------------------------
+# Pooling Strategy (New Feature)
+# ------------------------------------------------------------------------------
+# Determines how the Cell Embedding is derived from the gene sequence.
+# Options:
+# - "mean" (Default): Average of all non-padding gene embeddings.
+#                     Recommended for Geneformer as it aggregates cell-wide info.
+#                     Robust to sequence length variations.
+# - "cls"           : Use the embedding of the first token (or [CLS] if present).
+#                     Note: If no [CLS] token is added by the tokenizer, this 
+#                     takes the embedding of the first gene (highest rank gene).
+pooling_mode: "mean"
+
+model:
+  # ----------------------------------------------------------------------------
+  # LoRA Configuration
+  # ----------------------------------------------------------------------------
+  # CRITICAL: These settings MUST match the configuration used during training.
+  # If you trained with use_lora=true, you must evaluate with use_lora=true.
+  use_lora: true 
+  lora_config:
+    r: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: ["query", "key", "value", "dense"]

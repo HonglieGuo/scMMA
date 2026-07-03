@@ -1,0 +1,9 @@
+# @package model.modality_encoders.atac
+
+_target_: src.models.components.modality_encoders.LatentPeakEncoder
+d_model: ${model.backbone.d_model}
+n_latents: 128
+hidden_dim: 1024
+dropout: 0.1
+use_layer_norm: true
+n_peaks: null

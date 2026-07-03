@@ -1,0 +1,34 @@
+# Unified Multi-Modal Data Configuration for scGPT Foundation Model
+# Uses scGPT-specific vocabulary and binning-based tokenization
+# (different from Geneformer's rank-value encoding)
+#
+# Usage: python scripts/train.py --config-name train_atac model/backbone=scgpt data=multimodal_scgpt
+
+_target_: src.datamodules.multimodal_datamodule.MultiModalDataModule
+
+data_dir: data/
+
+# scGPT Vocabulary (gene_name → token_id mapping)
+vocab_path: models/pretrained/scGPT_human/vocab.json
+
+# Not used by scGPT (no gene median or ensembl mapping needed)
+gene_id_map_path: null
+gene_median_path: null
+
+# Cell type label column (overridden per dataset in train*.yaml)
+label_col: "cell_type"
+
+# Integration task type (options: Vertical, Diagonal, Mosaic, Cross)
+integration_task: "Vertical"
+
+# Preprocessor: scGPT uses binning-based tokenization
+preprocessor_type: scgpt
+
+# Sequence length (scGPT official pretrain: max_seq_len=1200)
+max_seq_len: 1200
+
+# DataLoader settings (typically overridden by train*.yaml)
+batch_size: 12
+num_workers: 16
+pin_memory: true
+persistent_workers: true

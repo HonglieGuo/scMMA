@@ -1,0 +1,80 @@
+# Run Command: python scripts/train.py --config-name train_trimodal
+# For datasets with RNA + ATAC + ADT (e.g., D22, D59)
+
+defaults:
+  - model/backbone: geneformer
+  - model/arch: crossattn
+  
+  # ATAC Encoder (inherited from crossattn.yaml default)
+  - model/atac_encoder: conv1d
+  
+  # ADT Encoder (injected via Hydra package override)
+  - model/atac_encoder@model.modality_encoders.adt: adt
+  
+  - data: multimodal
+  - _self_
+
+trainer:
+  accelerator: auto        
+  devices: 1               
+  max_epochs: 30           
+  accumulate_grad_batches: 1 
+  gradient_clip_val: 1.0   
+  precision: 16-mixed      
+  log_every_n_steps: 10
+  check_val_every_n_epoch: 1
+
+data:
+  data_dir: "datasets/h5ad/D22/RNA+ADT+ATAC"
+  label_col: "cell_type"
+  integration_task: "Vertical"
+
+  num_workers: 16           
+  pin_memory: true         
+  persistent_workers: true 
+  max_seq_len: 1024
+
+# Model: Enable BOTH modalities in CrossAttentionFusion
+model:
+  pooling_mode: "auto"     # "mean" (Geneformer-30M), "cls" (scGPT)
+  fusion_module:
+    modalities: ["atac", "adt"]   # Cross-Attention layers for both modalities
+    
+  learning_rate: 1e-4      
+  weight_decay: 0.01
+  mask_ratio: 0.15         
+  weight_tying: true       
+  use_lora: true           
+  warmup_epochs: 5         
+  
+  # Hybrid Loss Weights
+  mtp_weight: 1.0        
+  cls_weight: 1.0        
+  contrastive_weight: 1.0 
+  supcon_weight: 2.0     
+  contrastive_temperature: 0.07
+  
+  # Feature Projection
+  projection_head_type: "linear"
+  projection_dim: 256
+  eval_apply_projection: false
+  
+  lora_config:
+    r: 16                  
+    alpha: 32              
+    dropout: 0.05
+    target_modules: ["query", "key", "value", "dense"]
+
+# Logger Configuration
+logger:
+  name: "Adapter-Run-Trimodal"
+
+seed: 42
+
+hydra:
+  run:
+    dir: outputs/${now:%Y-%m-%d}
+  sweep:
+    dir: outputs/${now:%Y-%m-%d}
+  job:
+    chdir: false  

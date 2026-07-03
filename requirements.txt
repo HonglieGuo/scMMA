@@ -1,0 +1,56 @@
+# scMMA - Single-cell Multi-Modal Adapter
+# Core dependencies for PyTorch Lightning research repository
+
+# === Deep Learning Framework (Base) ===
+# Must be installed first for downstream package compilation
+torch
+torchvision
+
+# === Foundation Model (Git Sources) ===
+# Install early as they may have complex sub-dependencies
+transformers>=4.30
+git+https://hf-mirror.com/ctheodoris/Geneformer.git
+
+# === PyTorch Geometric ===
+# Note: Consider using --no-build-isolation when installing these
+torch-geometric
+torch-scatter
+torch-sparse
+
+# === Lightning & Experiment Management ===
+lightning>=2.0
+hydra-core>=1.3
+omegaconf
+
+# === Single-cell Analysis ===
+scanpy>=1.9
+anndata>=0.10
+muon  # Multi-modal data handling
+
+# === Efficient Fine-tuning ===
+peft>=0.7  # LoRA, etc.
+
+# === Benchmark Dependencies ===
+scib
+scglue
+# git+https://github.com/bm2-lab/SCMMI_Benchmark.git
+
+# === Utilities ===
+einops>=0.7
+rich
+tqdm
+pynvml
+
+# === Scientific Computing ===
+numpy
+scipy
+pandas
+openpyxl
+scikit-learn
+
+# === Dev Tools ===
+mypy
+black
+isort
+pytest
+ipykernel

@@ -1,0 +1,120 @@
+## DM
+[dm_sub10]
+raw_data_dirs = [
+    "./Example_data/dm_sub10",
+]
+raw_data_frags = [
+    "",
+]
+combs = [
+    [ ["rna", "adt"] ],
+]
+comb_ratios = [ 
+    [ 1 ],
+]
+s_joint = [
+    [ 0 ], 
+]
+
+
+# SLN
+[sln_sub10]
+raw_data_dirs = [
+    "./Example_data/sln_sub10",
+]
+raw_data_frags = [
+    "",
+]
+combs = [
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+]
+comb_ratios = [
+    [ 1 ], [ 1 ], [ 1 ], [ 1 ],
+]
+s_joint = [
+    [ 0 ], [ 1 ], [ 2 ], [ 3 ]
+]
+
+
+[sln_sub10_train]
+raw_data_dirs = [
+    "./Example_data/sln_sub10_train",
+]
+raw_data_frags = [
+    "",
+]
+combs = [
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ]
+]
+comb_ratios = [
+    [ 1 ], [ 1 ]
+]
+s_joint = [
+    [ 0 ], [ 1 ]
+]
+
+
+# bmmc
+[bmmc_sub10]
+raw_data_dirs = [
+    "./Example_data/bmmc_sub10",
+]
+raw_data_frags = [
+    "",
+]
+combs = [
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+]
+comb_ratios = [
+    [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ],
+]
+s_joint = [
+    [ 0 ], [ 1 ], [ 2 ], [ 3 ], [ 4 ], [ 5 ], [ 6 ], [ 7 ], [ 8 ], [ 9 ], [ 10 ], [ 11 ]
+]
+
+
+#imc_ref
+[imc_ref]
+raw_data_dirs = [
+    "data/processed/imc_ref",
+]
+raw_data_frags = [
+    "",
+]
+combs = [
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+    [ ["rna", "adt"] ],
+]
+comb_ratios = [
+    [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ], [ 1 ]
+]
+s_joint = [
+    [ 0 ], [ 1 ], [ 2 ], [ 3 ], [ 4 ], [ 5 ], [ 6 ], [ 7 ], [ 8 ], [ 9 ], [ 10 ], [ 11 ], [ 12 ]
+]
+

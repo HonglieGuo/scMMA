@@ -1,0 +1,37 @@
+# Unified Multi-Modal Data Configuration
+# Works with any dataset directory containing .h5ad files
+# (auto-detects RNA, ATAC, ADT from filenames)
+#
+# Usage in train*.yaml:
+#   defaults:
+#     - data: multimodal
+#   data:
+#     data_dir: "data/BMMC/RNA+ATAC"  # or any other dataset path
+#     label_col: "cell_type"          # dataset-specific label column
+
+_target_: src.datamodules.multimodal_datamodule.MultiModalDataModule
+
+data_dir: data/
+
+# Geneformer Token Files
+vocab_path: models/pretrained/token_files/Geneformer/token_dictionary_geneformer.json
+gene_id_map_path: models/pretrained/token_files/Geneformer/ensembl_mapping_dict.json
+gene_median_path: models/pretrained/token_files/Geneformer/gene_median_dictionary.json
+
+# Cell type label column (overridden per dataset in train*.yaml)
+label_col: "cell_type"
+
+# Integration task type (options: Vertical, Diagonal, Mosaic, Cross)
+integration_task: "Vertical"
+
+# Preprocessor (geneformer or scgpt)
+preprocessor_type: geneformer
+
+# Sequence length
+max_seq_len: 1024
+
+# DataLoader settings (typically overridden by train*.yaml)
+batch_size: 24
+num_workers: 16
+pin_memory: true
+persistent_workers: true

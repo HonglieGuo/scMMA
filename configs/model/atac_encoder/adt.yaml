@@ -1,0 +1,12 @@
+# Default configuration for the ADT (Antibody-Derived Tags) Encoder
+_target_: src.models.components.modality_encoders.ADTEncoder
+
+# Number of protein features from CITE-seq (BMMC dataset has 134 in the test batches usually, but varies. Will be auto-injected by DataModule or Train script if needed)
+n_proteins: 134
+
+
+# Hidden dimension of the intermediate MLP layer
+hidden_dim: 256
+
+# Dropout rate
+dropout: 0.1
