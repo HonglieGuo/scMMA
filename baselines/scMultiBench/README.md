@@ -1,87 +1,87 @@
-# scMultiBench — 对比方法脚本集
+# scMultiBench — Baseline Method Script Collection
 
-> 来源：[PYangLab/scMultiBench](https://github.com/PYangLab/scMultiBench)
-> 用途：为 scMMA 项目提供对比方法的运行脚本和统一评估 pipeline
+> Source: [PYangLab/scMultiBench](https://github.com/PYangLab/scMultiBench)
+> Purpose: Provides execution scripts and a unified evaluation pipeline for baseline methods in the scMMA project.
 
 ---
 
-## 目录结构
+## Directory Structure
 
 ```
 scMultiBench/
-├── tools_scripts/          # 各对比方法的运行脚本
+├── tools_scripts/          # Execution scripts for various baseline methods
 │   ├── totalVI/            # Python, RNA+ADT
-│   ├── MOFA2/              # R+Python, 多模态
-│   ├── Seurat_v4/          # R (WNN), 多模态
-│   ├── ... (共 40 个方法)
+│   ├── MOFA2/              # R+Python, Multi-modal
+│   ├── Seurat_v4/          # R (WNN), Multi-modal
+│   ├── ... (Total of 40 methods)
 │   └── uniPort/
-└── evaluation_pipelines/   # 统一评估脚本
-    ├── scib_metrics/       # DR + Batch Correction + Clustering 指标
-    ├── classification/     # 分类评估
-    ├── clustering/         # 聚类评估
-    ├── imputation/         # 插补评估
-    ├── fs/                 # Feature Selection 评估
-    └── spatial_registration/  # 空间注册评估
+└── evaluation_pipelines/   # Unified evaluation scripts
+    ├── scib_metrics/       # DR + Batch Correction + Clustering metrics
+    ├── classification/     # Classification evaluation
+    ├── clustering/         # Clustering evaluation
+    ├── imputation/         # Imputation evaluation
+    ├── fs/                 # Feature Selection evaluation
+    └── spatial_registration/  # Spatial registration evaluation
 ```
 
 ---
 
-## 方法清单（按整合类型分类）
+## Method List (Categorized by Integration Type)
 
-### Vertical Integration（垂直整合）— 主要对比方法
+### Vertical Integration — Main Baseline Methods
 
-| 方法 | 语言 | 适用模态 | 支持任务 |
+| Method | Language | Modalities | Supported Tasks |
 |------|------|---------|---------|
 | totalVI | Python | RNA+ADT | DR, Clustering, Imputation |
 | sciPENN | Python | RNA+ADT | DR, Imputation |
-| Concerto | Python | 多模态 | DR, Clustering |
+| Concerto | Python | Multi-modal | DR, Clustering |
 | scMSI | Python | RNA+ADT | DR, Clustering |
-| Matilda | Python | 多模态 | DR, Classification, FS |
-| MOFA2 | R+Python | 多模态 | DR, Clustering, FS |
-| Multigrate | Python | 多模态 | DR, Clustering |
-| UINMF | R | 多模态 | DR, Clustering |
-| scMoMaT | Python | 多模态 | DR, Clustering, FS |
-| Seurat_v4 (WNN) | R | 多模态 | DR, Clustering |
-| scMM | Python | 多模态 | DR, Imputation |
-| scMDC | Python | 多模态 | DR, Clustering |
-| moETM | Python | 多模态 | DR, Imputation |
-| VIMCCA | Python | 多模态 | DR, Clustering |
-| iPOLNG | Python | 多模态 | DR, Clustering |
+| Matilda | Python | Multi-modal | DR, Classification, FS |
+| MOFA2 | R+Python | Multi-modal | DR, Clustering, FS |
+| Multigrate | Python | Multi-modal | DR, Clustering |
+| UINMF | R | Multi-modal | DR, Clustering |
+| scMoMaT | Python | Multi-modal | DR, Clustering, FS |
+| Seurat_v4 (WNN) | R | Multi-modal | DR, Clustering |
+| scMM | Python | Multi-modal | DR, Imputation |
+| scMDC | Python | Multi-modal | DR, Clustering |
+| moETM | Python | Multi-modal | DR, Imputation |
+| VIMCCA | Python | Multi-modal | DR, Clustering |
+| iPOLNG | Python | Multi-modal | DR, Clustering |
 | MIRA | Python | RNA+ATAC | DR, Clustering |
-| UnitedNet | Python | 多模态 | DR, Imputation |
+| UnitedNet | Python | Multi-modal | DR, Imputation |
 | scMVP | Python | RNA+ATAC | DR, Clustering |
 
-### Diagonal Integration（对角整合）
+### Diagonal Integration
 
-| 方法 | 语言 | 备注 |
+| Method | Language | Notes |
 |------|------|------|
-| scBridge | Python | 跨模态标签迁移 |
-| Portal | Python | 快速批次校正 |
-| SCALEX | Python | 可扩展批次校正 |
+| scBridge | Python | Cross-modal label transfer |
+| Portal | Python | Fast batch correction |
+| SCALEX | Python | Scalable batch correction |
 | VIPCCA | Python | — |
 | Seurat_v3 | R | CCA-based |
-| Seurat_v5 | R | Bridge 整合 |
+| Seurat_v5 | R | Bridge integration |
 | MultiMAP | Python | — |
 | sciCAN | Python | — |
 | Conos | R | — |
 | iNMF | R | LIGER |
-| online iNMF | R | LIGER 在线版 |
+| online iNMF | R | LIGER Online Version |
 | scJoint | Python | — |
-| GLUE | Python | 图引导多模态对齐 |
-| uniPort | Python | 最优传输 |
+| GLUE | Python | Graph-linked multi-modal alignment |
+| uniPort | Python | Optimal transport |
 
-### Mosaic Integration（马赛克整合）
+### Mosaic Integration
 
-| 方法 | 语言 |
+| Method | Language |
 |------|------|
 | MultiVI | Python |
 | Cobolt | Python |
 | StabMap | R |
 | SMILE | Python |
 
-### Spatial Registration（空间注册）
+### Spatial Registration
 
-| 方法 | 语言 |
+| Method | Language |
 |------|------|
 | PASTE | Python |
 | PASTE2 | Python |
@@ -90,9 +90,9 @@ scMultiBench/
 
 ---
 
-## 评估 Pipeline 使用方法
+## Evaluation Pipeline Usage
 
-### scib_metrics（DR + Batch Correction + Clustering）
+### scib_metrics (DR + Batch Correction + Clustering)
 
 ```bash
 cd evaluation_pipelines/scib_metrics
@@ -102,9 +102,9 @@ python scib_metric.py \
     --save_path "path/to/results/"
 ```
 
-输出指标：NMI, ARI, ASW_label, ASW_batch, iLISI, cLISI, kBET, graph_conn, isolated_label_F1
+Output metrics: NMI, ARI, ASW_label, ASW_batch, iLISI, cLISI, kBET, graph_conn, isolated_label_F1
 
-### Classification（分类）
+### Classification
 
 ```bash
 cd evaluation_pipelines/classification
@@ -116,4 +116,4 @@ python classification.py \
     --save_path "path/to/results/"
 ```
 
-输出：Overall Accuracy, Average Accuracy, F1, Sensitivity, Specificity
+Output: Overall Accuracy, Average Accuracy, F1, Sensitivity, Specificity
