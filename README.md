@@ -14,7 +14,7 @@ By utilizing parameter-efficient fine-tuning (PEFT) techniques like LoRA and int
 Current single-cell foundation models are predominantly pre-trained exclusively on transcriptomic (RNA) data. scMMA solves this limitation by wrapping these models with flexible modality encoders and an advanced fusion module, enabling them to comprehend epigenetic (ATAC) and surface protein (ADT) landscapes.
 
 <p align="center">
-  <a href="assets/architecture.pdf">
+  <a href="assets/architecture.png">
     <img src="assets/architecture.png" alt="scMMA Architecture" width="800">
   </a>
 </p>
