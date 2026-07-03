@@ -1,2 +1,5 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Mark third-party baselines as vendored code so they don't skew GitHub language statistics
+baselines/** linguist-vendored
+
+# Ignore all Jupyter Notebooks from language statistics completely (optional but helpful)
+*.ipynb linguist-detectable=false
