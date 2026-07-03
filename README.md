@@ -74,12 +74,20 @@ pip install -r requirements.txt
 
 ## 💾 Data Preparation
 
-The datasets and pre-trained models required for scMMA are hosted on Hugging Face. You can download them directly into the root directory of this project.
+The datasets and pre-trained models required for scMMA are hosted on Hugging Face. You can easily download them directly into the empty `datasets/` and `models/` folders in this project using the `huggingface-cli`.
 
-1. **Download Datasets:** Place the `.h5ad` files into the `datasets/h5ad/` directory.
-2. **Download Pretrained Models:** Place the foundation model weights (e.g., Geneformer, scGPT) into the `models/pretrained/` directory.
+### 1. Download Datasets
+The datasets are hosted at: [Honglie/scMMA-datasets](https://huggingface.co/datasets/Honglie/scMMA-datasets)
+```bash
+huggingface-cli download Honglie/scMMA-datasets --repo-type dataset --local-dir datasets
+```
 
-> *Hugging Face Repository Link: [To be added]*
+### 2. Download Pretrained Models
+The model weights are hosted at: [Honglie/scMMA-models](https://huggingface.co/Honglie/scMMA-models)
+```bash
+huggingface-cli download Honglie/scMMA-models --local-dir models
+```
+*(This will automatically download the foundation model weights like Geneformer directly into the `models/pretrained/` directory.)*
 
 ---
 
