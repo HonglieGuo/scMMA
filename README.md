@@ -13,7 +13,9 @@ By utilizing parameter-efficient fine-tuning (PEFT) techniques like LoRA and int
 
 Current single-cell foundation models are predominantly pre-trained exclusively on transcriptomic (RNA) data. scMMA solves this limitation by wrapping these models with flexible modality encoders and an advanced fusion module, enabling them to comprehend epigenetic (ATAC) and surface protein (ADT) landscapes.
 
-![scMMA Architecture](assets/architecture.png)
+<p align="center">
+  <img src="assets/architecture.png" alt="scMMA Architecture" width="800">
+</p>
 *Figure 1: Overview of the scMMA framework. RNA tokens are processed by the frozen foundation model (with LoRA adapters). ATAC and ADT data are processed via lightweight modality encoders. The embeddings are then integrated using a Cross-Attention Fusion module before being projected to the final latent space.*
 
 ---
@@ -51,14 +53,14 @@ We strongly recommend using `conda` to manage the environment.
 
 ### 1. Create a Conda Environment
 ```bash
-conda create -n scmma python=3.9
+conda create -n scmma python=3.10
 conda activate scmma
 ```
 
 ### 2. Install PyTorch
-Install PyTorch 2.0+ tailored to your CUDA version (example for CUDA 11.8):
+Install PyTorch 2.7.1 (example for CUDA 12.9):
 ```bash
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu129
 ```
 
 ### 3. Install Dependencies
@@ -83,19 +85,14 @@ The datasets and pre-trained models required for scMMA are hosted on Hugging Fac
 
 scMMA uses **Hydra** for flexible configuration management and **PyTorch Lightning** for distributed training.
 
-### Training RNA + ATAC
+### Training RNA + ATAC (e.g., D18 dataset)
 ```bash
-python scripts/train.py --config-name train_atac data.data_dir="datasets/h5ad/BMMC-p10/RNA+ATAC"
+python scripts/train.py --config-name train_atac data.data_dir="datasets/h5ad/D18/RNA+ATAC"
 ```
 
-### Training RNA + ADT
+### Training RNA + ADT (e.g., D1 dataset)
 ```bash
-python scripts/train.py --config-name train_adt data.data_dir="datasets/h5ad/BMMC-p10/RNA+ADT"
-```
-
-### Training Trimodal (RNA + ATAC + ADT)
-```bash
-python scripts/train.py --config-name train_trimodal data.data_dir="datasets/h5ad/D22/RNA+ADT+ATAC"
+python scripts/train.py --config-name train_adt data.data_dir="datasets/h5ad/D1/RNA+ADT"
 ```
 
 ### Automated Batch Execution
