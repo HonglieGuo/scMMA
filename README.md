@@ -14,8 +14,8 @@ By utilizing parameter-efficient fine-tuning (PEFT) techniques like LoRA and int
 Current single-cell foundation models are predominantly pre-trained exclusively on transcriptomic (RNA) data. scMMA solves this limitation by wrapping these models with flexible modality encoders and an advanced fusion module, enabling them to comprehend epigenetic (ATAC) and surface protein (ADT) landscapes.
 
 <p align="center">
-  <a href="assets/architecture.png">
-    <img src="assets/architecture.png" alt="scMMA Architecture" width="800">
+  <a href="assets/scMMA_architecture.png">
+    <img src="assets/scMMA_architecture.png" alt="scMMA Architecture" width="800">
   </a>
 </p>
 *Figure 1: Overview of the scMMA framework. RNA tokens are processed by the frozen foundation model (with LoRA adapters). ATAC and ADT data are processed via lightweight modality encoders. The embeddings are then integrated using a Cross-Attention Fusion module before being projected to the final latent space.*
